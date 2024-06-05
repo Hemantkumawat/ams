@@ -11,6 +11,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        $this->down();
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
@@ -52,21 +53,19 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
-
         Schema::create('staff', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('staff_id')->unique();
             $table->string('first_name');
             $table->string('last_name')->nullable();
-            $table->enum('designation', StaffDesignation::getAllToArray());
+            $table->enum('designation', StaffDesignation::toSelectArray());
             $table->string('contact_number');
             $table->string('email')->unique();
             $table->text('address')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
-
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('course_code')->unique();
@@ -74,8 +73,7 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->timestamps();
         });
-
-        Schema::create('classes', function (Blueprint $table) {
+        Schema::create('class_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->string('class_name');
@@ -83,27 +81,24 @@ return new class extends Migration {
             $table->string('location')->nullable();
             $table->timestamps();
         });
-
-        Schema::create('student_classes', function (Blueprint $table) {
+        Schema::create('student_class_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->foreignId('class_id')->constrained()->onDelete('cascade');
+            $table->foreignId('class_detail_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
-
         Schema::create('qr_codes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('class_id')->constrained()->onDelete('cascade');
+            $table->foreignId('class_detail_id')->constrained()->onDelete('cascade');
             $table->string('qr_code')->unique();
             $table->timestamp('generated_at');
             $table->timestamp('expires_at');
             $table->timestamps();
         });
-
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->foreignId('class_id')->constrained()->onDelete('cascade');
+            $table->foreignId('class_detail_id')->constrained()->onDelete('cascade');
             $table->foreignId('qr_code_id')->constrained()->onDelete('cascade');
             $table->timestamp('checked_in_at');
             $table->timestamps();
@@ -115,6 +110,17 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendance_tables');
+        Schema::dropIfExists('attendances');
+        Schema::dropIfExists('qr_codes');
+        Schema::dropIfExists('student_class_details');
+        Schema::dropIfExists('class_details');
+        Schema::dropIfExists('courses');
+        Schema::dropIfExists('students');
+        Schema::dropIfExists('staff');
+        Schema::dropIfExists('user_permissions');
+        Schema::dropIfExists('user_roles');
+        Schema::dropIfExists('role_permissions');
+        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('roles');
     }
 };
