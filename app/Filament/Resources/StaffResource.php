@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\StaffDesignation;
 use App\Filament\Resources\StaffResource\Pages;
 use App\Filament\Resources\StaffResource\RelationManagers;
 use App\Models\Staff;
@@ -17,21 +18,34 @@ class StaffResource extends Resource
 {
     protected static ?string $model = Staff::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
-            ]);
+                Forms\Components\TextInput::make('staff_id')->unique()->required(),
+                Forms\Components\TextInput::make('first_name')->required(),
+                Forms\Components\TextInput::make('last_name'),
+                Forms\Components\Select::make('designation')->options(StaffDesignation::toSelectArray())->required(),
+                Forms\Components\TextInput::make('contact_number')->required()->tel(),
+                Forms\Components\TextInput::make('email')->unique()->required(),
+                Forms\Components\Textarea::make('address'),
+            ])
+            ->columns(2);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('staff_id'),
+                Tables\Columns\TextColumn::make('first_name'),
+                Tables\Columns\TextColumn::make('last_name'),
+                Tables\Columns\TextColumn::make('designation'),
+                Tables\Columns\TextColumn::make('contact_number'),
+                Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('address'),
             ])
             ->filters([
                 //

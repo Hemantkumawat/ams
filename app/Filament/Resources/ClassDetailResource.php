@@ -17,15 +17,15 @@ class ClassDetailResource extends Resource
 {
     protected static ?string $model = ClassDetail::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\BelongsToSelect::make('course_id')
+                Forms\Components\Select::make('course_id')
                     ->relationship('course', 'course_name')
-                    ->required(),
+                    ->required()->nullable(),
                 Forms\Components\TextInput::make('class_name')
                     ->required(),
                 Forms\Components\DateTimePicker::make('class_time'),
@@ -42,7 +42,7 @@ class ClassDetailResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('class_time')
                     ->searchable()
-                    ->sortable()->formatState(fn($i)=>'abcd'),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('location')
                     ->searchable()
                     ->sortable(),

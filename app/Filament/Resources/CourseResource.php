@@ -17,21 +17,24 @@ class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function form(Form $form): Form
+protected static ?string $navigationIcon = 'heroicon-o-book-open';    public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
-            ]);
+                Forms\Components\TextInput::make('course_code')->unique()->required(),
+                Forms\Components\TextInput::make('course_name')->required(),
+                Forms\Components\TextInput::make('description'),
+            ])
+            ->columns(2);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('course_code'),
+               Tables\Columns\TextColumn::make('course_name'),
+               Tables\Columns\TextColumn::make('description'),
             ])
             ->filters([
                 //
