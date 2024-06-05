@@ -17,9 +17,6 @@ class StaffObserver
      */
     public function created(Staff $staff): void
     {
-        // Create User
-        // Create QR Code
-        // Assign QR Code to Staff
         $user = User::query()->create([
             'name' => $staff->name,
             'email' => $staff->email,
