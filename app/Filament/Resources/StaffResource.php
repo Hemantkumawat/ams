@@ -24,7 +24,6 @@ class StaffResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('staff_id')->unique()->required(),
                 Forms\Components\TextInput::make('first_name')->required(),
                 Forms\Components\TextInput::make('last_name'),
                 Forms\Components\Select::make('designation')->options(StaffDesignation::toSelectArray())->required(),
@@ -39,7 +38,6 @@ class StaffResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('staff_id'),
                 Tables\Columns\TextColumn::make('first_name'),
                 Tables\Columns\TextColumn::make('last_name'),
                 Tables\Columns\TextColumn::make('designation'),

@@ -2,28 +2,43 @@
 
 namespace App\Observers;
 
+use App\Models\QrCode;
 use App\Models\Staff;
 use App\Models\User;
 use App\Services\QrCodeService;
 use Endroid\QrCode\Exception\ValidationException;
 use Illuminate\Support\Str;
+use JsonException;
 
 class StaffObserver
 {
+
     /**
-     * Handle the Staff "created" event.
-     * @throws ValidationException
-     * @throws \JsonException
+     * @throws JsonException
      */
-    public function created(Staff $staff): void
+    public function creating(Staff $staff): void
     {
-        $user = User::query()->create([
-            'name' => $staff->name,
+        $user = User::query()->firstOrCreate([
+            'email' => $staff->email
+        ], [
+            'name' => $staff->first_name.' '.$staff->last_name,
             'email' => $staff->email,
             'password' => bcrypt($staff->password ?? Str::random()),
         ]);
-       $res =  QrCodeService::getInstance()->generateQrCode(json_encode($user->toArray(), JSON_THROW_ON_ERROR), 'Staff Details');
-        $staff->user()->associate($user);
+        $staff->user_id = $user->id;
+
+    }
+
+    /**
+     * Handle the Staff "created" event.
+     */
+    public function created(Staff $staff): void
+    {
+        QrCode::query()->create([
+            'staff_id' => $staff->id,
+            'qr_code' => QrCodeService::generateQrCode($staff->id, labelText: 'Staff ID'),
+            'expires_at' => null,
+        ]);
     }
 
     /**
