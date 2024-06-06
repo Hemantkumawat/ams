@@ -44,7 +44,9 @@ class ClassDetailResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('location')
+
                     ->searchable()
+
                     ->sortable(),
             ])
             ->filters([
