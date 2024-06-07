@@ -26,8 +26,7 @@ class ClassDetailResource extends Resource
                 Forms\Components\Select::make('course_id')
                     ->relationship('course', 'course_name')
                     ->required()->nullable(),
-                Forms\Components\TextInput::make('class_name')
-                    ->required(),
+                Forms\Components\TextInput::make('class_name')->required(),
                 Forms\Components\DateTimePicker::make('class_time'),
                 Forms\Components\TextInput::make('location'),
             ]);
@@ -44,9 +43,7 @@ class ClassDetailResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('location')
-
                     ->searchable()
-
                     ->sortable(),
             ])
             ->filters([
