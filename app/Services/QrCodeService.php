@@ -12,6 +12,8 @@ use Endroid\QrCode\QrCode;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Exception;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class QrCodeService
 {
@@ -32,9 +34,8 @@ class QrCodeService
 
     /**
      */
-    public static function generateQrCode(string $text, ?string $logoPath = null, ?string $labelText = null): string
+    public static function generateQrCode(string $text, ?string $logoPath = null, ?string $labelText = null, string $storagePath = 'qr-codes'): string
     {
-        try {
             self::getInstance();
             $writer = new PngWriter();
 
@@ -55,11 +56,14 @@ class QrCodeService
                 ->setTextColor(new Color(255, 0, 0)) : null;
             $result = $writer->write($qrCode, $logo, $label);
 
-            $writer->validateResult($result, $text);
+            // $writer->validateResult($result, $text);
 
-            return $result->getDataUri();
-        } catch (Exception $e) {
-            return '';
-        }
+            $fileName = Str::slug(date('Y-m-d-H-i') . '-' . $labelText . '-' . Str::random(5)) . '.png';
+            if ($storagePath) {
+                Storage::put('public/'.$storagePath.'/'.$fileName , $result->getString());
+            }
+            // return $result->getDataUri();
+            return $storagePath . '/' . $fileName;
+
     }
 }

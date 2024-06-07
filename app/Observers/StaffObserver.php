@@ -2,9 +2,11 @@
 
 namespace App\Observers;
 
+use App\Enums\QrCodeType;
 use App\Models\QrCode;
 use App\Models\Staff;
 use App\Models\User;
+use App\Services\HashIdService;
 use App\Services\QrCodeService;
 use Endroid\QrCode\Exception\ValidationException;
 use Illuminate\Support\Str;
@@ -21,7 +23,7 @@ class StaffObserver
         $user = User::query()->firstOrCreate([
             'email' => $staff->email
         ], [
-            'name' => $staff->first_name.' '.$staff->last_name,
+            'name' => $staff->first_name . ' ' . $staff->last_name,
             'email' => $staff->email,
             'password' => bcrypt($staff->password ?? Str::random()),
         ]);
@@ -34,9 +36,10 @@ class StaffObserver
      */
     public function created(Staff $staff): void
     {
+        $key = HashIdService::encode(QrCodeType::STAFF_ATTENDANCE->value) . '::' . $staff->user->hash_id . '::' . $staff->hash_id;
         QrCode::query()->create([
             'staff_id' => $staff->id,
-            'qr_code' => QrCodeService::generateQrCode($staff->id, labelText: 'Staff ID'),
+            'qr_code' => QrCodeService::generateQrCode($key, storagePath: 'qr-codes/staff'),
             'expires_at' => null,
         ]);
     }

@@ -8,6 +8,11 @@ use App\Filament\Resources\StaffResource\RelationManagers;
 use App\Models\Staff;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Component;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
+use Filament\Infolists\Components\{TextEntry, ImageEntry};
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -27,7 +32,9 @@ class StaffResource extends Resource
                 Forms\Components\TextInput::make('first_name')->required(),
                 Forms\Components\TextInput::make('last_name'),
                 Forms\Components\Select::make('designation')->options(StaffDesignation::toSelectArray())->required(),
-                Forms\Components\TextInput::make('contact_number')->required()->tel(),
+                Forms\Components\TextInput::make('contact_number')->required()->tel()
+                    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/'),
+
                 Forms\Components\TextInput::make('email')->unique()->required(),
                 Forms\Components\Textarea::make('address'),
             ])
@@ -49,6 +56,7 @@ class StaffResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -63,6 +71,27 @@ class StaffResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make('first_name')->label('First Name'),
+                TextEntry::make('last_name')->label('Last Name'),
+                TextEntry::make('designation')
+                    ->formatStateUsing(fn(Staff $staff) => $staff->designation)
+                    ->label('Designation'),
+                TextEntry::make('contact_number')->label('Contact Number'),
+                TextEntry::make('email')->label('Email'),
+                TextEntry::make('address')->label('Address'),
+                ImageEntry::make('qrCode.qr_code')
+                    ->label('QR Code')
+                    // ->visibility('public')
+                    /*->url(function (Staff $staff) {
+                        return Storage::url($staff->qrCode->qr_code);
+                    })*/,
+            ])->columns(3);
     }
 
     public static function getPages(): array

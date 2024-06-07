@@ -2,10 +2,12 @@
 
 namespace App\Observers;
 
+use App\Enums\QrCodeType;
 use App\Models\QrCode;
 use App\Models\Staff;
 use App\Models\Student;
 use App\Models\User;
+use App\Services\HashIdService;
 use App\Services\QrCodeService;
 use Illuminate\Support\Str;
 
@@ -16,7 +18,7 @@ class StudentObserver
         $user = User::query()->firstOrCreate([
             'email' => $row->email
         ], [
-            'name' => $row->first_name.' '.$row->last_name,
+            'name' => $row->first_name . ' ' . $row->last_name,
             'email' => $row->email,
             'password' => bcrypt($row->password ?? Str::random()),
         ]);
@@ -28,9 +30,10 @@ class StudentObserver
      */
     public function created(Student $student): void
     {
+        $key = HashIdService::encode(QrCodeType::STUDENT_ATTENDANCE->value) . '::' . $student->user->hash_id . '::' . $student->hash_id;
         QrCode::query()->create([
             'student_id' => $student->id,
-            'qr_code' => QrCodeService::generateQrCode($student->id, labelText: 'Student ID'),
+            'qr_code' => QrCodeService::generateQrCode($key, storagePath: 'qr-codes/students'),
         ]);
     }
 

@@ -4,8 +4,71 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "92891334c0df7f5ec37dc93be6810ec5",
+    "content-hash": "7c0cacc19958f07f645637f0033dd7f3",
     "packages": [
+        {
+            "name": "abanoubnassem/filament-phone-field",
+            "version": "v0.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AbanoubNassem/filament-phone-field.git",
+                "reference": "47d7c5e70e71b9d00021f892fcb8ca7863110ade"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AbanoubNassem/filament-phone-field/zipball/47d7c5e70e71b9d00021f892fcb8ca7863110ade",
+                "reference": "47d7c5e70e71b9d00021f892fcb8ca7863110ade",
+                "shasum": ""
+            },
+            "require": {
+                "filament/forms": "^2.16|^3.0-stable|^3.2.51",
+                "illuminate/contracts": "^9.0|^10.0|^11.0",
+                "php": "^8.0|^8.1|^8.2|^8.3",
+                "spatie/laravel-package-tools": "^1.13.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AbanoubNassem\\FilamentPhoneField\\FilamentPhoneFieldServiceProvider"
+                    ],
+                    "aliases": {
+                        "FilamentPhoneField": "AbanoubNassem\\FilamentPhoneField\\Facades\\FilamentPhoneField"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AbanoubNassem\\FilamentPhoneField\\": "src",
+                    "AbanoubNassem\\FilamentPhoneField\\Database\\Factories\\": "database/factories"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Abanoub Nassem",
+                    "email": "abanoubnassemmousa@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Provides a Phone Input field for the Filament Forms, works in Admin-Panel and Forntend-Forms",
+            "homepage": "https://github.com/abanoubnassem/filament-phone-field",
+            "keywords": [
+                "AbanoubNassem",
+                "International Telephone Input",
+                "filament-phone-field",
+                "intl-tel-input",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/AbanoubNassem/filament-phone-field/issues",
+                "source": "https://github.com/AbanoubNassem/filament-phone-field/tree/v0.0.6"
+            },
+            "time": "2024-03-18T06:09:41+00:00"
+        },
         {
             "name": "anourvalar/eloquent-serialize",
             "version": "1.2.22",
@@ -2322,6 +2385,75 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "hashids/hashids",
+            "version": "5.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vinkla/hashids.git",
+                "reference": "197171016b77ddf14e259e186559152eb3f8cf33"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vinkla/hashids/zipball/197171016b77ddf14e259e186559152eb3f8cf33",
+                "reference": "197171016b77ddf14e259e186559152eb3f8cf33",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.0"
+            },
+            "suggest": {
+                "ext-bcmath": "Required to use BC Math arbitrary precision mathematics (*).",
+                "ext-gmp": "Required to use GNU multiple precision mathematics (*)."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hashids\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Akimov",
+                    "email": "ivan@barreleye.com"
+                },
+                {
+                    "name": "Vincent Klaiber",
+                    "email": "hello@doubledip.se"
+                }
+            ],
+            "description": "Generate short, unique, non-sequential ids (like YouTube and Bitly) from numbers",
+            "homepage": "https://hashids.org/php",
+            "keywords": [
+                "bitly",
+                "decode",
+                "encode",
+                "hash",
+                "hashid",
+                "hashids",
+                "ids",
+                "obfuscate",
+                "youtube"
+            ],
+            "support": {
+                "issues": "https://github.com/vinkla/hashids/issues",
+                "source": "https://github.com/vinkla/hashids/tree/5.0.2"
+            },
+            "time": "2023-02-23T15:00:54+00:00"
         },
         {
             "name": "khanamiryan/qrcode-detector-decoder",
