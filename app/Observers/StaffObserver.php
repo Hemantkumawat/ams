@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\HashIdService;
 use App\Services\QrCodeService;
 use Endroid\QrCode\Exception\ValidationException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JsonException;
 
@@ -16,7 +17,6 @@ class StaffObserver
 {
 
     /**
-     * @throws JsonException
      */
     public function creating(Staff $staff): void
     {
@@ -36,7 +36,8 @@ class StaffObserver
      */
     public function created(Staff $staff): void
     {
-        $key = HashIdService::encode(QrCodeType::STAFF_ATTENDANCE->value) . '::' . $staff->user->hash_id . '::' . $staff->hash_id;
+        $key = HashIdService::encode(QrCodeType::STAFF_ATTENDANCE->value) . '-' . $staff->user->hash_id . '-' . $staff->hash_id;
+        Log::info('Staff Detail for QR Code',['key'=>$key,'type'=>QrCodeType::STAFF_ATTENDANCE->value]);
         QrCode::query()->create([
             'staff_id' => $staff->id,
             'qr_code' => QrCodeService::generateQrCode($key, storagePath: 'qr-codes/staff'),

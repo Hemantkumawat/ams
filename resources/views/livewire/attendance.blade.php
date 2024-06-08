@@ -27,21 +27,23 @@
 @assets
 <script defer src="{{ asset('js/html5-qrcode.min.js') }}" type="text/javascript"></script>
 @endassets
-@push('scripts')
+@scripts
     <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                function onScanSuccess(qrMessage) {
-                    console.log(`qrCodeScanned ${qrMessage}`)
-                    Livewire.dispatch('qrCodeScanned', [qrMessage]);
-                }
-                function onScanFailure(error) {
-                    // Handle scan failure, usually better to ignore and keep scanning.
-                    // console.warn(`QR code scan error: ${error}`);
-                }
-                let html5QrcodeScanner = new Html5QrcodeScanner(
-                    "reader", {fps: 10, qrbox: 250}
-                );
-                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        document.addEventListener('DOMContentLoaded', function () {
+            function onScanSuccess(qrMessage) {
+                console.log(`qrCodeScanned ${qrMessage}`)
+                Livewire.dispatch('qrCodeScanned', [qrMessage]);
+            }
+
+            function onScanFailure(error) {
+                // Handle scan failure, usually better to ignore and keep scanning.
+                // console.warn(`QR code scan error: ${error}`);
+            }
+
+            let html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", {fps: 10, qrbox: 250}
+            );
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
         });
     </script>
-@endpush
+@endscripts

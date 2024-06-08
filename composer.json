@@ -9,6 +9,7 @@
         "abanoubnassem/filament-phone-field": "^0.0.6",
         "endroid/qr-code": "^5.0",
         "filament/filament": "^3.2",
+        "filament/spatie-laravel-settings-plugin": "^3.2",
         "hashids/hashids": "^5.0",
         "khanamiryan/qrcode-detector-decoder": "^2.0",
         "laravel/framework": "^11.9",
