@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\AttendanceStatus;
+use App\Enums\QrCodeType;
 use App\Enums\StaffDesignation;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -65,7 +66,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('first_name');
             $table->string('last_name')->nullable();
-            $table->enum('designation', StaffDesignation::toSelectArray());
+            $table->enum('designation', StaffDesignation::getAllValues());
             $table->string('contact_number');
             $table->string('email')->unique();
             $table->text('address')->nullable();
@@ -99,9 +100,11 @@ return new class extends Migration {
 
         Schema::create('qr_codes', static function (Blueprint $table) {
             $table->id();
+            $table->uuid()->nullable();
             $table->foreignId('staff_id')->nullable()->constrained('staff')->onDelete('cascade');
             $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('cascade');
             $table->text('qr_code');
+            $table->enum('type', QrCodeType::getAllValues());
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
@@ -109,12 +112,14 @@ return new class extends Migration {
         Schema::create('attendances', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('cascade');
-            $table->foreignId('staff_id')->nullable()->constrained('students')->onDelete('cascade');
+            $table->foreignId('staff_id')->nullable()->constrained('staff')->onDelete('cascade');
             $table->foreignId('class_detail_id')->nullable()->constrained('class_details')->onDelete('cascade');
             $table->foreignId('qr_code_id')->constrained('qr_codes')->onDelete('cascade');
             $table->timestamp('checked_in_at')->nullable();
             $table->timestamp('checked_out_at')->nullable();
-            $table->enum('status', AttendanceStatus::toSelectArray());
+            $table->ipAddress('checked_in_ip')->nullable();
+            $table->ipAddress('checked_out_ip')->nullable();
+            $table->enum('status', AttendanceStatus::getAllValues());
             $table->timestamps();
             $table->softDeletes();
         });

@@ -36,9 +36,10 @@ class StaffObserver
      */
     public function created(Staff $staff): void
     {
-        $key = HashIdService::encode(QrCodeType::STAFF_ATTENDANCE->value) . '-' . $staff->user->hash_id . '-' . $staff->hash_id;
-        Log::info('Staff Detail for QR Code',['key'=>$key,'type'=>QrCodeType::STAFF_ATTENDANCE->value]);
+        $key = Str::uuid();
         QrCode::query()->create([
+            'type' => QrCodeType::STAFF_ATTENDANCE,
+            'uuid' => $key,
             'staff_id' => $staff->id,
             'qr_code' => QrCodeService::generateQrCode($key, storagePath: 'qr-codes/staff'),
             'expires_at' => null,

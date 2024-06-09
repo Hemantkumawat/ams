@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Enums\AttendanceStatus;
 use App\Enums\QrCodeType;
+use App\Models\QrCode;
 use App\Models\Staff;
 use App\Models\Student;
 use App\Services\HashIdService;
@@ -22,52 +24,60 @@ class Attendance extends Component
     /**
      * @throws Exception
      */
-    public function qrCodeScanned($qrMessage)
+    public function qrCodeScanned($qrMessage): void
     {
-        /*try{*/
-        $details = explode('-', $qrMessage);
-        if (count($details) !== 3) {
-            throw new RuntimeException('Invalid QR Code');
+        try {
+            $this->punchIn($qrMessage);
+            $this->dispatch('alert', type: 'success', message: 'Attendance Recorded Successfully!', data: []);
+        } catch (Exception $e) {
+            $this->dispatch('alert', type: 'error', message: $e->getMessage());
         }
-        $qrCodeType = HashIdService::decode($details[0]);
-        $userId = HashIdService::decode($details[1]);
-        $modelId = HashIdService::decode($details[2]);
-        if ($qrCodeType == QrCodeType::STAFF_ATTENDANCE) {
-            $staff = Staff::query()->where('id', $modelId)->first();
+    }
+
+    public function punchIn($qrCodeUuid): void
+    {
+        $qrCodeDetail = QrCode::query()->where('uuid', $qrCodeUuid)->first();
+        if (!$qrCodeDetail) {
+            throw new RuntimeException('Invalid QR Code detected');
+        }
+        $data = [];
+        $data['checked_in_at'] = now();
+        $data['status'] = getSetting('punch_in_time_start') <= now()->format('H:i:s') ? AttendanceStatus::Present : AttendanceStatus::Late;
+        $data['checked_in_ip'] = request()->ip();
+        $data['qr_code_id'] = $qrCodeDetail->id;
+        if ($qrCodeDetail->type->is(QrCodeType::STAFF_ATTENDANCE)) {
+            $staff = $qrCodeDetail->staff;
             if (!$staff) {
                 throw new RuntimeException('Invalid Staff detected');
             }
-            $staff->attendances()->create([
-                'staff_id' => $staff->id,
-                'user_id' => $staff->user_id,
-                'qr_code_id' => $staff->qrCode->id,
-                'qr_code' => $qrMessage,
-            ]);
-        } elseif ($qrCodeType == QrCodeType::STUDENT_ATTENDANCE) {
-            $student = Student::query()->where('id', $modelId)->first();
+            // Check if the staff is already checked in today
+            $attendance = \App\Models\Attendance::query()->where('staff_id', $staff->id)->whereDay('checked_in_at', now()->subDays(4))->first();
+            if ($attendance) {
+                throw new RuntimeException('Staff already checked in today');
+            }
+            $data['staff_id'] = $staff->id;
+            $data['student_id'] = null;
+            $data['class_detail_id'] = null;
+            // $data['user_id'] = $staff->user_id;
+        } elseif ($qrCodeDetail->type->is(QrCodeType::STUDENT_ATTENDANCE)) {
+            $student = $qrCodeDetail->student;
             if (!$student) {
                 throw new RuntimeException('Invalid Student detected');
             }
-            $student->attendances()->create([
-                'student_id' => $student->id,
-                'user_id' => $student->user_id,
-                'qr_code_id' => $student->qrCode->id,
-                'qr_code' => $qrMessage,
-            ]);
+            // Check if the student is already checked in today
+            $attendance = \App\Models\Attendance::query()->where('student_id', $student->id)->whereDay('checked_in_at', now())->first();
+            if ($attendance) {
+                throw new RuntimeException('Student already checked in today');
+            }
+            $data['student_id'] = $student->id;
+            $data['staff_id'] = null;
+            $data['class_detail_id'] = null;
+            // $data['user_id'] = $student->user_id;
         } else {
-            throw new RuntimeException('Invalid QR Code Type');
+            throw new RuntimeException('Invalid QR Code Type detected');
         }
-
-        dd($qrMessage);
-        /*}catch (\Exception $e){
-            dd($e->getMessage());
-        }*/
-    }
-
-    public function punchIn(){
-        // Only one time should be accepted for the day
-        // If the user punch in after config('school.start_time') then it should be considered as late
-        // If the user punch in before config('school.start_time') then it should be considered as on time
-        // If the user punch in after config('school.end_time') then it should be considered as absent
+        if (isset($data) && count($data) > 0) {
+            \App\Models\Attendance::query()->create($data);
+        }
     }
 }

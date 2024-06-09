@@ -31,11 +31,13 @@ class StudentObserver
      */
     public function created(Student $student): void
     {
-        $key = HashIdService::encode(QrCodeType::STUDENT_ATTENDANCE->value) . '-' . $student->user->hash_id . '-' . $student->hash_id;
-        Log::info('Student Detail for QR Code',['key'=>$key,'type'=>QrCodeType::STAFF_ATTENDANCE->value]);
+        $key = Str::uuid();
         QrCode::query()->create([
+            'type' => QrCodeType::STUDENT_ATTENDANCE,
             'student_id' => $student->id,
+            'uuid' => $key,
             'qr_code' => QrCodeService::generateQrCode($key, storagePath: 'qr-codes/students'),
+            'expires_at' => null,
         ]);
     }
 

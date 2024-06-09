@@ -86,4 +86,58 @@ trait BaseEnumTrait
     {
         return !$this->is($status);
     }
+
+    public function isOneOf($statuses): bool
+    {
+        return in_array($this->value, $statuses);
+    }
+
+    public static function getEnum($value): ?static
+    {
+        $reflection = new \ReflectionClass(static::class);
+        foreach ($reflection->getReflectionConstants() as $constant) {
+            if ($constant->getValue() == $value) {
+                return $constant->getValue();
+            }
+        }
+        return null;
+    }
+
+    public static function getEnumByKey($key): ?static
+    {
+        $reflection = new \ReflectionClass(static::class);
+        foreach ($reflection->getReflectionConstants() as $constant) {
+            if ($constant->getName() == $key) {
+                return $constant->getValue();
+            }
+        }
+        return null;
+    }
+
+    public static function getEnumByValue($value): ?static
+    {
+        $reflection = new \ReflectionClass(static::class);
+        foreach ($reflection->getReflectionConstants() as $constant) {
+            if ($constant->getValue() == $value) {
+                return $constant->getValue();
+            }
+        }
+        return null;
+    }
+
+    public static function getAllKeys(): array {
+        $keys = [];
+        foreach (static::cases() as $case) {
+            $keys[] = $case->name;
+        }
+        return $keys;
+    }
+
+    public static function getAllValues(): array {
+        $values = [];
+        foreach (static::cases() as $case) {
+            $values[] = $case->value;
+        }
+        return $values;
+    }
 }
