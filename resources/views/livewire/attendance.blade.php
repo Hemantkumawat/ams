@@ -54,12 +54,10 @@
             // Modify the reader element
             const readerElement = document.getElementById('reader');
             readerElement.classList.add('p-4', 'border', 'border-gray-300', 'rounded-lg');
-
             // Modify the dashboard section
             const dashboardSection = document.getElementById('reader__dashboard_section');
             if (dashboardSection) {
                 dashboardSection.classList.add('flex', 'justify-between', 'items-center', 'p-4', 'bg-gray-50', 'rounded-lg');
-
                 // Custom buttons
                 const buttons = dashboardSection.querySelectorAll('button');
                 buttons.forEach(button => {
