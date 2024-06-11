@@ -49,7 +49,6 @@
             "reader", {fps: 10, qrbox: 250}
         );
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-
         /*setTimeout(() => {
             // Modify the reader element
             const readerElement = document.getElementById('reader');
